@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User profile</title>
+    <style>
+        body {
+            padding: 30px;
+            font-size: 18px;
+            font-family: monospace;
+        }
+        table { border-collapse: collapse; }
+        th, td { padding: 5px; border: solid 1px #777; }
+        th { background-color: lightblue; }
+        ul li { list-style: none; padding: 5px 0;}
+    </style>
+</head>
+
+
+<body>
+<h3>Профиль <span style="text-decoration: underline" th:text="${user.getName()}"></span></h3>
+<nav>
+    <ul>
+        <li>
+            <a href="/admin">Все пользователи</a>
+        </li>
+        <li>
+            <a th:href="@{/admin/edit(id=${user.getId()})}">Редактировать</a>
+        </li>
+        <li>
+            <form th:method="POST" th:action="@{/admin/delete}">
+                <input type="hidden" th:name="id" th:value="${user.id}"/>
+                <button type="submit">Удалить</button>
+            </form>
+        </li>
+        <li>
+            <a href="/logout">Выйти</a>
+        </li>
+    </ul>
+</nav>
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Возраст</th>
+            <th>Электронная почта</th>
+            <th>Роль</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usr : ${user}">
+            <td th:text="${usr.getId()}"></td>
+            <td th:text="${usr.getName()}"></td>
+            <td th:text="${usr.getAge()}"></td>
+            <td th:text="${usr.getEmail()}"></td>
+            <td><span th:each="role : ${usr.getRoles()}" th:text="${role} + ' '"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
