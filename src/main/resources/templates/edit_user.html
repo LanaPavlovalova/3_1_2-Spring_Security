@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <title>Edit User</title>
   <style>
@@ -11,25 +12,31 @@
 <body>
 <h1>Edit User</h1>
 
-<form th:action="@{/admin/edit/{id}(id=${user.id})}" th:object="${user}" method="post">
+<!-- Форма редактирования -->
+<form th:action="@{/admin/edit/{id}(id=${user.id})}" method="post">
+  <!-- CSRF токен -->
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+  <input type="hidden" name="id" th:value="${user.id}"/>
+
   <div class="form-group">
     <label for="username">Username:</label>
-    <input type="text" id="username" th:field="*{username}" required>
+    <input type="text" id="username" name="username" th:value="${user.username}" required>
   </div>
 
   <div class="form-group">
     <label for="email">Email:</label>
-    <input type="email" id="email" th:field="*{email}" required>
+    <input type="email" id="email" name="email" th:value="${user.email}" required>
   </div>
 
   <div class="form-group">
     <label for="password">Password:</label>
-    <input type="password" id="password" th:field="*{password}" placeholder="Leave empty to keep current">
+    <input type="password" id="password" name="password" placeholder="Leave empty to keep current">
   </div>
 
   <div class="form-group">
     <label for="age">Age:</label>
-    <input type="number" id="age" th:field="*{age}" required min="1">
+    <input type="number" id="age" name="age" th:value="${user.age}" required min="1">
   </div>
 
   <div class="form-group">
@@ -43,6 +50,15 @@
 
   <button type="submit">Save Changes</button>
   <a href="/admin" style="margin-left: 10px;">Cancel</a>
+</form>
+
+<!-- Форма для удаления -->
+<form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post">
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  <button type="submit" onclick="return confirm('Are you sure?')"
+          style="background-color: #dc3545; color: white;">
+    Delete User
+  </button>
 </form>
 </body>
 </html>

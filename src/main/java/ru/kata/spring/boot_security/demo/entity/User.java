@@ -2,18 +2,9 @@ package ru.kata.spring.boot_security.demo.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,19 +16,18 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(unique = true)
     private String username;
 
-    @Column(name = "password")
     private String password;
 
-    @Column(name = "age", nullable = false)
+    @Column(nullable = false)
     private Integer age;
 
-    @Column(name = "email", unique = true) // Добавлено поле email
+    @Column(unique = true)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -51,7 +41,31 @@ public class User implements UserDetails {
                 .collect(Collectors.joining(", "));
     }
 
-    // Геттеры и сеттеры
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -84,11 +98,11 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public String getEmail() { // Геттер для email
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) { // Сеттер для email
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -100,37 +114,16 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    // Реализация методов UserDetails
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(r -> r.getName().equals(roleName));
-    }
-
-    public boolean isAdmin() {
-        return hasRole("ROLE_ADMIN");
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
