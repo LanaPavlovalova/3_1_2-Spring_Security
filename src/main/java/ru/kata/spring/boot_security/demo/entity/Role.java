@@ -16,7 +16,7 @@ public class Role implements GrantedAuthority {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = {})
     private Set<User> users;
 
     @Override
@@ -24,7 +24,6 @@ public class Role implements GrantedAuthority {
         return name;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

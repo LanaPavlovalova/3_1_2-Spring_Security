@@ -20,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsernameWithRoles(String username) {
         try {
             User user = entityManager.createQuery(
-                            "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.username = :username",
+                            "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.username = :username",
                             User.class)
                     .setParameter("username", username)
                     .getSingleResult();
